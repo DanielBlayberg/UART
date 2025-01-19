@@ -1,23 +1,25 @@
-module PISO_UART(
-    input wire           reset_n,         // Active low reset
-    input wire           start_send,      // Start transmission signal
-    input wire           baud_clock,      // Baud rate clock
-    input wire           parity_bit,      // Parity bit
-    input wire [7:0]     parallel_data,   // 8-bit parallel data input
+module PISO(
+    input wire           reset_n,             
+    input wire           baud_clock,            
+    input wire [7:0]     parallel_data,
+    input wire           start_send,
+    input wire           parity_check, 
   
-    output reg           serial_out,      // Serial output
-    output reg           is_transmitting, // High when transmitting
-    output reg           transmission_done, // High when done
-    output reg           error_flag       // High on transmission error
+    output reg           serial_out,      
+    output reg           is_transmitting,
+    output reg           transmission_done, 
+    output reg           error_flag      
 );
 
     // Internal declarations
-    reg [3:0]    bit_counter;         // Counts transmitted bits
-    reg [10:0]   transmit_frame;      // Holds the full transmission frame
-    reg [10:0]   frame_shift_reg;     // Shift register for bitwise transmission
-    reg [1:0]    current_state, next_state; // FSM states
-    wire         is_transmission_done; // Indicates when transmission is complete
-    reg          start_request;       // Internal request flag for new transmission
+    wire         is_transmission_done;
+    wire         is_transmission_done; 
+    reg          start_request;      
+    reg [3:0]    bit_counter;      
+    reg [10:0]   transmit_frame;     
+    reg [10:0]   frame_shift_reg;     
+    reg [1:0]    current_state, next_state; 
+   
 
     // State encoding
     typedef enum logic [2:0] {
@@ -32,7 +34,7 @@ module PISO_UART(
     // Frame generation
     always @(posedge baud_clock or negedge reset_n) begin
         if (!reset_n) begin
-            transmit_frame <= 11'b11111111111; // Default idle state
+            transmit_frame <= {11{1'b1}}; // Default idle state
         end else if (current_state == LOAD_FRAME || current_state == RELOAD_FRAME) begin
             transmit_frame <= {1'b1, parity_bit, parallel_data, 1'b0}; // Stop, parity, data, start
         end
