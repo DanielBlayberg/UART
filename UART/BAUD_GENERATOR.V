@@ -1,10 +1,10 @@
 module BAUDGEN (
-    input wire          reset_n,       // Active low reset
-    input wire [1:0]    baud_config,   // Baud rate configuration (2-bit)
-    input wire          system_clk,    // System clock
+    input wire          reset_n,       
+    input wire [1:0]    baud_config,   
+    input wire          system_clk,    
     
-    output reg          baud_pulse,    // Generated baud pulse
-    output reg          clock_stable   // High if clock is stable
+    output reg          baud_pulse,    
+    output reg          clock_stable   
 );
 
     // Internal declarations
@@ -27,15 +27,15 @@ module BAUDGEN (
         if (!reset_n) begin
             counter <= 16'd0;
             baud_pulse <= 1'b0;
-            clock_stable <= 1'b0; // Reset stability flag
+            clock_stable <= 1'b0; \
         end else begin
             if (counter >= threshold) begin
-                counter <= 16'd0; // Reset counter
-                baud_pulse <= ~baud_pulse; // Toggle baud pulse
-                clock_stable <= 1'b1; // Indicate clock stability
+                counter <= 16'd0;
+                baud_pulse <= ~baud_pulse; 
+                clock_stable <= 1'b1; 
             end else begin
                 counter <= counter + 16'd1;
-                clock_stable <= 1'b0; // Indicate unstable clock during counting
+                clock_stable <= 1'b0; 
             end
         end
     end
