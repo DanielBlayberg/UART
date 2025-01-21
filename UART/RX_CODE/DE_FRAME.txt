@@ -1,12 +1,12 @@
 module DeFrame (
-    input wire  [10:0]  frame_parallel,  // Full frame from the SIPO unit
-    input wire          frame_ready,     // Indicates the frame is ready for processing
+    input wire  [10:0]  frame_parallel, 
+    input wire          frame_ready,    
 
-    output reg          extracted_parity, // The parity bit separated from the data frame
-    output reg          extracted_start,  // The Start bit separated from the data frame
-    output reg          extracted_stop,   // The Stop bit separated from the data frame
-    output reg          frame_done,       // Indicates that the frame has been processed
-    output reg  [7:0]   data_payload      // The 8-bit data separated from the frame
+    output reg          extracted_parity, 
+    output reg          extracted_start,  
+    output reg          extracted_stop,   
+    output reg          frame_done,       
+    output reg  [7:0]   data_payload     
 );
 
     // Extracting frame components
