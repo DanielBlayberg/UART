@@ -1,11 +1,11 @@
 module SIPO_Receiver (
-    input  wire         reset_active_low,  // Active low reset
-    input  wire         serial_data_in,    // Serial data received from the transmitter
-    input  wire         baud_clock,        // Clock signal from the sampling unit
+    input  wire         reset_active_low,  
+    input  wire         serial_data_in,    
+    input  wire         baud_clock,      
 
-    output wire         is_active,         // High when receiving data
-    output wire         data_ready,        // High when full frame is received
-    output wire  [10:0] parallel_data_out  // 11-bit parallel data frame
+    output wire         is_active,         
+    output wire         data_ready,        
+    output wire  [10:0] parallel_data_out  
 );
 
     // Internal registers
@@ -25,16 +25,16 @@ module SIPO_Receiver (
             current_state <= STATE_IDLE;
             clock_counter <= 4'd0;
             bit_counter   <= 4'd0;
-            frame_register <= 11'b11111111111; // Default idle frame
+            frame_register <= 11'b11111111111; 
         end else begin
             current_state <= next_state;
             case (current_state)
                 STATE_IDLE: begin
-                    frame_register <= 11'b11111111111; // Reset frame
+                    frame_register <= 11'b11111111111; 
                     clock_counter <= 4'd0;
                     bit_counter <= 4'd0;
                     if (~serial_data_in) begin
-                        next_state <= STATE_CENTER; // Start bit detected
+                        next_state <= STATE_CENTER; 
                     end else begin
                         next_state <= STATE_IDLE;
                     end
@@ -43,7 +43,7 @@ module SIPO_Receiver (
                 STATE_CENTER: begin
                     if (clock_counter == 4'd7) begin
                         clock_counter <= 4'd0;
-                        next_state <= STATE_RECEIVE; // Center of start bit
+                        next_state <= STATE_RECEIVE; 
                     end else begin
                         clock_counter <= clock_counter + 4'd1;
                     end
@@ -52,12 +52,12 @@ module SIPO_Receiver (
                 STATE_RECEIVE: begin
                     if (bit_counter == 4'd10) begin
                         bit_counter <= 4'd0;
-                        next_state <= STATE_READY; // Frame fully received
+                        next_state <= STATE_READY; 
                     end else begin
                         if (clock_counter == 4'd15) begin
                             clock_counter <= 4'd0;
                             bit_counter <= bit_counter + 4'd1;
-                            frame_register <= {serial_data_in, frame_register[10:1]}; // Shift in new bit
+                            frame_register <= {serial_data_in, frame_register[10:1]}; 
                         end else begin
                             clock_counter <= clock_counter + 4'd1;
                         end
@@ -65,7 +65,7 @@ module SIPO_Receiver (
                 end
 
                 STATE_READY: begin
-                    next_state <= STATE_IDLE; // Return to idle
+                    next_state <= STATE_IDLE; 
                 end
             endcase
         end
