@@ -1,23 +1,23 @@
 module ErrorChecker (
-    input wire         reset_active_low,  // Active low reset
-    input wire         frame_ready,       // Indicates a frame is ready for checking
-    input wire  [12:0] received_frame,    // Received frame: 8 data bits + 5 parity bits
-    input wire         received_parity,   // The parity bit from the received frame
-    input wire         received_start,    // The Start bit from the received frame
-    input wire         received_stop,     // The Stop bit from the received frame
-    input wire  [1:0]  parity_mode,       // Parity type agreed upon by Tx and Rx
-    output reg  [3:0]  error_location,    // Location of the error (0 if no error)
-    output reg         corrected,         // High if correction was applied
-    output reg  [7:0]  corrected_data,    // Corrected data output
-    output reg         global_error_flag, // High if any error is detected
-    output reg  [2:0]  frame_error_flag   // {stop_error, start_error, parity_error}
+    input wire         reset_active_low,  
+    input wire         frame_ready,      
+    input wire  [12:0] received_frame,    
+    input wire         received_parity,  
+    input wire         received_start,  
+    input wire         received_stop,    
+    input wire  [1:0]  parity_mode,       
+    output reg  [3:0]  error_location,   
+    output reg         corrected,         
+    output reg  [7:0]  corrected_data,   
+    output reg         global_error_flag, 
+    output reg  [2:0]  frame_error_flag   
 );
 
     // Internal signals
-    reg [4:0] calculated_parity; // Parity bits computed from received data
-    reg [4:0] received_parity_bits;   // Parity bits extracted from received frame
-    reg [7:0] data_bits;         // Extracted data bits from the received frame
-    reg [4:0] syndrome;          // Syndrome for error detection
+    reg [4:0] calculated_parity;
+    reg [4:0] received_parity_bits;  
+    reg [7:0] data_bits;       
+    reg [4:0] syndrome;         
 
     reg parity_error;
     reg start_error;
@@ -25,8 +25,8 @@ module ErrorChecker (
 
     // Extract data and parity bits
     always @(*) begin
-        data_bits = received_frame[12:5]; // 8 MSBs are data bits
-        received_parity_bits = received_frame[4:0]; // 5 LSBs are parity bits
+        data_bits = received_frame[12:5]; 
+        received_parity_bits = received_frame[4:0]; 
     end
 
     // Calculate parity bits from the received data
@@ -52,8 +52,8 @@ module ErrorChecker (
                        1'b0;
 
         // Start and Stop Bit checks
-        start_error = (received_start != 1'b0); // Start bit must be 0
-        stop_error = (received_stop != 1'b1);  // Stop bit must be 1
+        start_error = (received_start != 1'b0); 
+        stop_error = (received_stop != 1'b1);  
 
         // Frame-level error reporting
         frame_error_flag = {stop_error, start_error, parity_error};
@@ -64,8 +64,8 @@ module ErrorChecker (
             corrected_data = data_bits ^ (1 << (error_location - 1)); // Flip the erroneous bit
             corrected = 1'b1;
         end else begin
-            error_location = 4'd0; // No error
-            corrected_data = data_bits; // Data is correct
+            error_location = 4'd0;
+            corrected_data = data_bits; 
             corrected = 1'b0;
         end
 
