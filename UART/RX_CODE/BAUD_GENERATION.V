@@ -1,15 +1,15 @@
 module BaudGenR(
-    input wire          reset_n,     // Active low reset
-    input wire          system_clk,  // The system's main clock (200 MHz)
-    input wire  [1:0]   baud_rate,   // Baud Rate configuration
+    input wire          reset_n,     
+    input wire          system_clk,  
+    input wire  [1:0]   baud_rate,   
 
-    output reg          baud_clk,    // Clocking output for other modules
-    output reg          clock_stable // Indicates when the clock is stable
+    output reg          baud_clk,    
+    output reg          clock_stable 
 );
 
     // Internal declarations
-    reg [15:0] threshold;   // Threshold value based on baud_rate
-    reg [15:0] clock_ticks; // Counter for clock pulses
+    reg [15:0] threshold;   
+    reg [15:0] clock_ticks; 
 
     // Baud rate configuration mapping
     always @(*) begin
@@ -30,12 +30,12 @@ module BaudGenR(
             clock_stable <= 1'b0; // Reset clock stability
         end else begin
             if (clock_ticks >= threshold) begin
-                clock_ticks <= 16'd0; // Reset counter
-                baud_clk <= ~baud_clk; // Toggle baud clock
-                clock_stable <= 1'b1; // Indicate clock is stable
+                clock_ticks <= 16'd0; 
+                baud_clk <= ~baud_clk; 
+                clock_stable <= 1'b1; 
             end else begin
                 clock_ticks <= clock_ticks + 1'd1;
-                clock_stable <= 1'b0; // Clock is not stable during counting
+                clock_stable <= 1'b0; 
             end
         end
     end
